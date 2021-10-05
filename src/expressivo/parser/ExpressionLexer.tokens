@@ -1,8 +1,12 @@
 T__0=1
 T__1=2
-T__2=3
-NUMBER=4
-SPACES=5
+INTEGER=3
+DOUBLE=4
+VARIABLE=5
+OP=6
+CP=7
+SPACES=8
 '+'=1
-'('=2
-')'=3
+'*'=2
+'('=6
+')'=7
