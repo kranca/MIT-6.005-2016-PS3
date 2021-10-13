@@ -55,25 +55,13 @@ public class ExpressionBaseListener implements ExpressionListener {
    *
    * <p>The default implementation does nothing.</p>
    */
-  @Override public void enterPlus(ExpressionParser.PlusContext ctx) { }
+  @Override public void enterSubstractive(ExpressionParser.SubstractiveContext ctx) { }
   /**
    * {@inheritDoc}
    *
    * <p>The default implementation does nothing.</p>
    */
-  @Override public void exitPlus(ExpressionParser.PlusContext ctx) { }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation does nothing.</p>
-   */
-  @Override public void enterMinus(ExpressionParser.MinusContext ctx) { }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation does nothing.</p>
-   */
-  @Override public void exitMinus(ExpressionParser.MinusContext ctx) { }
+  @Override public void exitSubstractive(ExpressionParser.SubstractiveContext ctx) { }
   /**
    * {@inheritDoc}
    *
@@ -91,18 +79,6 @@ public class ExpressionBaseListener implements ExpressionListener {
    *
    * <p>The default implementation does nothing.</p>
    */
-  @Override public void enterTimes(ExpressionParser.TimesContext ctx) { }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation does nothing.</p>
-   */
-  @Override public void exitTimes(ExpressionParser.TimesContext ctx) { }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation does nothing.</p>
-   */
   @Override public void enterPrimitive(ExpressionParser.PrimitiveContext ctx) { }
   /**
    * {@inheritDoc}
@@ -110,6 +86,18 @@ public class ExpressionBaseListener implements ExpressionListener {
    * <p>The default implementation does nothing.</p>
    */
   @Override public void exitPrimitive(ExpressionParser.PrimitiveContext ctx) { }
+  /**
+   * {@inheritDoc}
+   *
+   * <p>The default implementation does nothing.</p>
+   */
+  @Override public void enterParenthesis(ExpressionParser.ParenthesisContext ctx) { }
+  /**
+   * {@inheritDoc}
+   *
+   * <p>The default implementation does nothing.</p>
+   */
+  @Override public void exitParenthesis(ExpressionParser.ParenthesisContext ctx) { }
 
   /**
    * {@inheritDoc}

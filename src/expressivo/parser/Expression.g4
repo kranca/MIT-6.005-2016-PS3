@@ -31,12 +31,11 @@ import Configuration;
  */
 root : expression EOF;
 expression : additive;
-additive: multiplicative ((plus | minus) multiplicative)*;
-plus: '+';
-minus: '-';
-multiplicative: primitive ((times) primitive)*;
-times: '*';
-primitive : '(' expression ')' | INTEGER | DOUBLE | VARIABLE | '-' primitive;
+additive: (substractive (('+') substractive)*)?;
+substractive: multiplicative (('-') multiplicative)*;
+multiplicative: primitive (('*') primitive)*;
+primitive : parenthesis | INTEGER | DOUBLE | VARIABLE | '-' primitive;
+parenthesis: '(' expression ')';
 INTEGER : [0-9]+;
 DOUBLE : [0-9]*'.'[0-9]+;
 VARIABLE : [a-zA-Z]+;

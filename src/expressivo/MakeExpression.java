@@ -1,8 +1,6 @@
 package expressivo;
 
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Stack;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
@@ -12,12 +10,11 @@ import expressivo.parser.ExpressionListener;
 import expressivo.parser.ExpressionParser;
 import expressivo.parser.ExpressionParser.AdditiveContext;
 import expressivo.parser.ExpressionParser.ExpressionContext;
-import expressivo.parser.ExpressionParser.MinusContext;
 import expressivo.parser.ExpressionParser.MultiplicativeContext;
-import expressivo.parser.ExpressionParser.PlusContext;
+import expressivo.parser.ExpressionParser.ParenthesisContext;
 import expressivo.parser.ExpressionParser.PrimitiveContext;
 import expressivo.parser.ExpressionParser.RootContext;
-import expressivo.parser.ExpressionParser.TimesContext;
+import expressivo.parser.ExpressionParser.SubstractiveContext;
 
 public class MakeExpression implements ExpressionListener {
 	private Stack<Expression> stack = new Stack<>();
@@ -28,155 +25,134 @@ public class MakeExpression implements ExpressionListener {
 
 	@Override
 	public void enterEveryRule(ParserRuleContext arg0) {
-		// TODO Auto-generated method stub
+		// Rule not needed
 
 	}
 
 	@Override
 	public void exitEveryRule(ParserRuleContext arg0) {
-		// TODO Auto-generated method stub
+		// Rule not needed
 
 	}
 
 	@Override
 	public void visitErrorNode(ErrorNode arg0) {
-		// TODO Auto-generated method stub
+		// Rule not needed
 
 	}
 
 	@Override
 	public void visitTerminal(TerminalNode arg0) {
-		// TODO Auto-generated method stub
+		// Rule not needed
 
 	}
 
 	@Override
 	public void enterRoot(RootContext ctx) {
-		// TODO Auto-generated method stub
+		// Rule not needed
 
 	}
 
 	@Override
 	public void exitRoot(RootContext ctx) {
-		// TODO Auto-generated method stub
+		// Rule not needed
 
 	}
 
 	@Override
 	public void enterExpression(ExpressionContext ctx) {
-		// TODO Auto-generated method stub
+		// Rule not needed
 
 	}
 
 	@Override
 	public void exitExpression(ExpressionContext ctx) {
-		// TODO Auto-generated method stub
+		// Rule not needed
 
 	}
 
 	@Override
 	public void enterAdditive(AdditiveContext ctx) {
-		// TODO Auto-generated method stub
+		// Rule not needed
 
 	}
 
 	@Override
 	public void exitAdditive(AdditiveContext ctx) {
-		List<ExpressionParser.MultiplicativeContext> addends = ctx.multiplicative();
+		// list contains amount of Expressions to be added
+		List<ExpressionParser.SubstractiveContext> addends = ctx.substractive();
+		
+		// confirm stack with Expressions >= amount Expressions to be added
 		assert stack.size() >= addends.size();
 		
+		// confirm at least one Expression will be added, since lexer is exiting an additive operation
 		assert addends.size() > 0;
+		
+		// get latest Expression parsed
 		Expression plus = stack.pop();
 		
-		String test = ctx.getText();
-		test.replaceAll("[a-zA-Z0-9]", "");
-		
-		System.out.println(test);
+		// add Expressions parsing from right to left
 		for (int i = 1; i < addends.size(); ++i) {
 			
 			plus = new Plus(stack.pop(), plus);
 		}
 		
+		// push updated Plus Expression back to stack
 		stack.push(plus);
 
 	}
 
 	@Override
-	public void enterPlus(PlusContext ctx) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void exitPlus(PlusContext ctx) {
-		//System.out.println();
-
-	}
-
-	@Override
-	public void enterMinus(MinusContext ctx) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void exitMinus(MinusContext ctx) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void enterMultiplicative(MultiplicativeContext ctx) {
-		
+		// Rule not needed
 
 	}
 
 	@Override
 	public void exitMultiplicative(MultiplicativeContext ctx) {
+		// list contains amount of Expressions to be multiplied
 		List<ExpressionParser.PrimitiveContext> factors = ctx.primitive();
+		
+		// confirm stack with Expressions >= amount Expressions to be multiplied
 		assert stack.size() >= factors.size();
 		
+		// confirm at least one Expression will be multiplied, since lexer is exiting a multiplicative operation
 		assert factors.size() > 0;
+		
+		// get latest Expression parsed
 		Expression times = stack.pop();
 		
+		// multiply Expressions parsing from right to left
 		for (int i = 1; i < factors.size(); ++i) {
 			times = new Times(stack.pop(), times);
 		}
 		
+		// push updated Times Expression back to stack
 		stack.push(times);
 
 	}
 
 	@Override
-	public void enterTimes(TimesContext ctx) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void exitTimes(TimesContext ctx) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void enterPrimitive(PrimitiveContext ctx) {
-		// TODO Auto-generated method stub
+		// Rule not needed
 
 	}
 
 	@Override
 	public void exitPrimitive(PrimitiveContext ctx) {
+		// if lexer catches an Integer value, create a Number Expression
 		if (ctx.INTEGER() != null) {
 			int n = Integer.valueOf(ctx.INTEGER().getText());
 			Expression intExpression = new Number(n);
 			stack.push(intExpression);
 		}
+		// if lexer catches an Double value, create a Number Expression
 		else if (ctx.DOUBLE() != null) {
 			double d = Double.valueOf(ctx.DOUBLE().getText());
 			Expression doubleExpression = new Number(d);
 			stack.push(doubleExpression);
 		}
+		// if lexer catches an String value, create a Number Expression
 		else if (ctx.VARIABLE() != null) {
 			Expression variable = new Variable(ctx.VARIABLE().getText());
 			stack.push(variable);
@@ -185,6 +161,79 @@ public class MakeExpression implements ExpressionListener {
 			// do nothing
 		}
 
+	}
+
+	@Override
+	public void enterSubstractive(SubstractiveContext ctx) {
+		// Rule not needed
+		
+	}
+
+	@Override
+	public void exitSubstractive(SubstractiveContext ctx) {
+		// list contains amount of Expressions to be subtracted
+		List<ExpressionParser.MultiplicativeContext> subtrahends = ctx.multiplicative();
+		
+		// confirm stack with Expressions >= amount Expressions to be subtracted
+		assert stack.size() >= subtrahends.size();
+		
+		// confirm at least one Expression will be subtracted, since lexer is exiting a subtraction operation
+		assert subtrahends.size() > 0;
+		
+		// get latest Expression parsed
+		Expression minus = stack.pop();
+		
+		// identifier for an Expression starting with negative sign
+		String startsWithMinus = ctx.getStart().getText();
+		
+		// Special handling for Expressions starting with a negative variable or number.
+		// A zero is inserted before the "-", such that the mathematical meaning of the expression is kept
+		if (startsWithMinus.equals("-")) {
+			// casees x*-y and --x need to be reviewed, otherwise works well using parenthesis, x*(-y) and -(-x)
+			Expression zero = new Number(0);
+			
+			// subtract Expressions parsing from right to left
+			for (int i = 1; i < subtrahends.size(); ++i) {
+				
+				minus = new Minus(stack.pop(), minus);
+				
+			}
+			// finally add a zero for cases handling negative expressions
+			minus = new Minus(zero, minus);
+		}
+		
+		else {
+			
+			// subtract regular positive expressions
+			for (int i = 1; i < subtrahends.size(); ++i) {
+				
+				minus = new Minus(stack.pop(), minus);
+				
+			}
+		}
+		// push updated Minus Expression back to stack
+		stack.push(minus);
+		
+	}
+
+	@Override
+	public void enterParenthesis(ParenthesisContext ctx) {
+		// Rule not needed
+		
+	}
+
+	@Override
+	public void exitParenthesis(ParenthesisContext ctx) {
+		
+		// get latest parsed Expression from stack
+		Expression e = stack.pop();
+		
+		// recursively create a new Parenthesis Expression
+		e = new Parenthesis(e);
+		
+		// push updated Expression with parenthesis back to stack
+		stack.push(e);
+		
 	}
 
 }

@@ -41,25 +41,15 @@ public interface ExpressionListener extends ParseTreeListener {
    */
   void exitAdditive(ExpressionParser.AdditiveContext ctx);
   /**
-   * Enter a parse tree produced by {@link ExpressionParser#plus}.
+   * Enter a parse tree produced by {@link ExpressionParser#substractive}.
    * @param ctx the parse tree
    */
-  void enterPlus(ExpressionParser.PlusContext ctx);
+  void enterSubstractive(ExpressionParser.SubstractiveContext ctx);
   /**
-   * Exit a parse tree produced by {@link ExpressionParser#plus}.
+   * Exit a parse tree produced by {@link ExpressionParser#substractive}.
    * @param ctx the parse tree
    */
-  void exitPlus(ExpressionParser.PlusContext ctx);
-  /**
-   * Enter a parse tree produced by {@link ExpressionParser#minus}.
-   * @param ctx the parse tree
-   */
-  void enterMinus(ExpressionParser.MinusContext ctx);
-  /**
-   * Exit a parse tree produced by {@link ExpressionParser#minus}.
-   * @param ctx the parse tree
-   */
-  void exitMinus(ExpressionParser.MinusContext ctx);
+  void exitSubstractive(ExpressionParser.SubstractiveContext ctx);
   /**
    * Enter a parse tree produced by {@link ExpressionParser#multiplicative}.
    * @param ctx the parse tree
@@ -71,16 +61,6 @@ public interface ExpressionListener extends ParseTreeListener {
    */
   void exitMultiplicative(ExpressionParser.MultiplicativeContext ctx);
   /**
-   * Enter a parse tree produced by {@link ExpressionParser#times}.
-   * @param ctx the parse tree
-   */
-  void enterTimes(ExpressionParser.TimesContext ctx);
-  /**
-   * Exit a parse tree produced by {@link ExpressionParser#times}.
-   * @param ctx the parse tree
-   */
-  void exitTimes(ExpressionParser.TimesContext ctx);
-  /**
    * Enter a parse tree produced by {@link ExpressionParser#primitive}.
    * @param ctx the parse tree
    */
@@ -90,4 +70,14 @@ public interface ExpressionListener extends ParseTreeListener {
    * @param ctx the parse tree
    */
   void exitPrimitive(ExpressionParser.PrimitiveContext ctx);
+  /**
+   * Enter a parse tree produced by {@link ExpressionParser#parenthesis}.
+   * @param ctx the parse tree
+   */
+  void enterParenthesis(ExpressionParser.ParenthesisContext ctx);
+  /**
+   * Exit a parse tree produced by {@link ExpressionParser#parenthesis}.
+   * @param ctx the parse tree
+   */
+  void exitParenthesis(ExpressionParser.ParenthesisContext ctx);
 }
