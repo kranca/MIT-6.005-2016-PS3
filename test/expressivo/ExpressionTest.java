@@ -20,6 +20,8 @@ public class ExpressionTest {
      * Variable: upper and lower case
      * Plus: Variable + Number, 
      * Times: Variable + Number
+     * Minus: Variable + Number
+     * Groupings with Parenthesis: Plus Times Minus
      * 
      * equals() partitions the inputs as follows:
      * Number: Number to Number, Number to Object
@@ -204,4 +206,127 @@ public class ExpressionTest {
     	assertFalse("Expected hashCode of Times e1 to be different from hashCode of Plus e3", hashCode1.equals(hashCode2));
     }
     
+ // covers Minus toString()
+    @Test
+    public void testMinusToString() {
+    	Expression left = new Variable("W");
+    	Expression right = new Number(5);
+    	
+    	Expression e1 = new Minus(left, right);
+    	String expected = "W - 5.0";
+    	
+    	assertEquals("Expected String \"W - y\"", expected, e1.toString());
+    }
+    // covers Minus equals()
+    @Test
+    public void testMinusEquals() {
+    	Expression left1 = new Number(2.5);
+    	Expression right1 = new Variable("Z");
+    	Expression left2 = new Number(2.5);
+    	Expression right2 = new Variable("Z");
+    	Expression right3 = new Variable("z");
+    	
+    	Expression e1 = new Minus(left1, right1);
+    	Expression e2 = new Minus(left2, right2);
+    	Expression e3 = new Minus(left2, right3);
+    	Expression e4 = new Plus(left2, right2);
+    	Expression e5 = new Times(left2, right2);
+    	
+    	Object o2 = e2;
+    	
+    	assertTrue("Expected Minus Expression e1 to equal Minus Expression e2", e1.equals(e2));
+    	assertTrue("Expected Minus Expression e1 to equal Object o2", e1.equals(o2));
+    	assertFalse("Expected Minus Expression e1 not to equal Minus Expression e3", e1.equals(e3));
+    	assertFalse("Expected Minus Expression e1 not to equal Plus Expression e2", e1.equals(e4));
+    	assertFalse("Expected Minus Expression e1 not to equal Times Expression e2", e1.equals(e5));
+    }
+    
+    // covers Minus hashCode()
+    public void testMinusHashCode() {
+    	Expression left1 = new Variable("w");
+    	Expression right1 = new Variable("y");
+    	Expression left2 = new Variable("w");
+    	Expression right2 = new Variable("y");
+    	
+    	Expression e1 = new Minus(left1, right1);
+    	Expression e2 = new Minus(left2, right2);
+    	Expression e3 = new Plus(left2, right2);
+    	Expression e4 = new Times(left2, right2);
+    	
+    	Integer hashCode1 = e1.hashCode();
+    	Integer hashCode2 = e3.hashCode();
+    	Integer hashCode3 = e4.hashCode();
+    	
+    	assertEquals("Expected hashCode of Minus e1 to equal hashCode of Minus e2", e1.hashCode(), e2.hashCode());
+    	assertFalse("Expected hashCode of Minus e1 to be different from hashCode of Plus e3", hashCode1.equals(hashCode2));
+    	assertFalse("Expected hashCode of Minus e1 to be different from hashCode of Times e4", hashCode1.equals(hashCode3));
+    }
+    
+ // covers Parenthesis toString()
+    @Test
+    public void testParenthesisToString() {
+    	Expression left = new Variable("W");
+    	Expression right = new Number(5);
+    	
+    	Expression e1 = new Plus(left, right);
+    	Expression e2 = new Minus(left, right);
+    	Expression p1 = new Parenthesis(e1);
+    	Expression p2 = new Parenthesis(e2);
+    	Expression t = new Times(p1, p2);
+    	String expected = "( W + 5.0 ) * ( W - 5.0 )";
+    	
+    	assertEquals("Expected String \"( W + 5.0) * ( W - 5.0)\"", expected, t.toString());
+    }
+    // covers Parenthesis equals()
+    @Test
+    public void testParenthesisEquals() {
+    	Expression left1 = new Number(2.5);
+    	Expression right1 = new Variable("Z");
+    	Expression left2 = new Number(2.5);
+    	Expression right2 = new Variable("Z");
+    	Expression right3 = new Variable("z");
+    	
+    	Expression e1 = new Minus(left1, right1);
+    	Expression e2 = new Minus(left2, right2);
+    	Expression e3 = new Minus(left2, right3);
+    	Expression e4 = new Plus(left2, right2);
+    	Expression e5 = new Times(left2, right2);
+    	
+    	Expression p1 = new Parenthesis(e1);
+    	Expression p2 = new Parenthesis(e2);
+    	Expression p3 = new Parenthesis(e3);
+    	Expression p4 = new Parenthesis(e4);
+    	Expression p5 = new Parenthesis(e5);
+    	
+    	Object o2 = p2;
+    	
+    	assertTrue("Expected Parenthesis Expression p1 to equal Parenthesis Expression p2", p1.equals(p2));
+    	assertTrue("Expected Parenthesis Expression p1 to equal Object o2", p1.equals(o2));
+    	assertFalse("Expected Parenthesis Expression p1 not to equal Parenthesis Expression p3", p1.equals(p3));
+    	assertFalse("Expected Parenthesis Expression e1 not to equal Parenthesis Expression p4", p1.equals(p4));
+    	assertFalse("Expected Parenthesis Expression e1 not to equal Parenthesis Expression p5", p1.equals(p5));
+    }
+    
+    // covers Parenthesis hashCode()
+    public void testParenthesisHashCode() {
+    	Expression v1 = new Variable("w");
+    	Expression v2 = new Variable("w");
+    	Expression n1 = new Number(7);
+    	Expression n2 = new Variable("W");
+    	
+    	Expression p1 = new Parenthesis(v1);
+    	Expression p2 = new Parenthesis(v2);
+    	Expression p3 = new Parenthesis(n1);
+    	Expression p4 = new Parenthesis(n2);
+    	
+    	Integer hashCode1 = p1.hashCode();
+    	Integer hashCode2 = p3.hashCode();
+    	Integer hashCode3 = p4.hashCode();
+    	Integer hashCode4 = v1.hashCode();
+    	
+    	assertEquals("Expected hashCode of Parenthesis p1 to equal hashCode of Parenthesis p2", p1.hashCode(), p2.hashCode());
+    	assertFalse("Expected hashCode of Parenthesis p1 to be different from hashCode of Parenthesis p3", hashCode1.equals(hashCode2));
+    	assertFalse("Expected hashCode of Parenthesis p1 to be different from hashCode of Parenthesis p4", hashCode1.equals(hashCode3));
+    	assertFalse("Expected hashCode of Parenthesis p1 to be different from hashCode of Variable v1", hashCode1.equals(hashCode4));
+    }
 }
