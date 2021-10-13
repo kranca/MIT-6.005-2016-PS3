@@ -31,6 +31,30 @@ public class ExpressionBaseListener implements ExpressionListener {
    *
    * <p>The default implementation does nothing.</p>
    */
+  @Override public void enterExpression(ExpressionParser.ExpressionContext ctx) { }
+  /**
+   * {@inheritDoc}
+   *
+   * <p>The default implementation does nothing.</p>
+   */
+  @Override public void exitExpression(ExpressionParser.ExpressionContext ctx) { }
+  /**
+   * {@inheritDoc}
+   *
+   * <p>The default implementation does nothing.</p>
+   */
+  @Override public void enterAdditive(ExpressionParser.AdditiveContext ctx) { }
+  /**
+   * {@inheritDoc}
+   *
+   * <p>The default implementation does nothing.</p>
+   */
+  @Override public void exitAdditive(ExpressionParser.AdditiveContext ctx) { }
+  /**
+   * {@inheritDoc}
+   *
+   * <p>The default implementation does nothing.</p>
+   */
   @Override public void enterPlus(ExpressionParser.PlusContext ctx) { }
   /**
    * {@inheritDoc}
@@ -38,6 +62,30 @@ public class ExpressionBaseListener implements ExpressionListener {
    * <p>The default implementation does nothing.</p>
    */
   @Override public void exitPlus(ExpressionParser.PlusContext ctx) { }
+  /**
+   * {@inheritDoc}
+   *
+   * <p>The default implementation does nothing.</p>
+   */
+  @Override public void enterMinus(ExpressionParser.MinusContext ctx) { }
+  /**
+   * {@inheritDoc}
+   *
+   * <p>The default implementation does nothing.</p>
+   */
+  @Override public void exitMinus(ExpressionParser.MinusContext ctx) { }
+  /**
+   * {@inheritDoc}
+   *
+   * <p>The default implementation does nothing.</p>
+   */
+  @Override public void enterMultiplicative(ExpressionParser.MultiplicativeContext ctx) { }
+  /**
+   * {@inheritDoc}
+   *
+   * <p>The default implementation does nothing.</p>
+   */
+  @Override public void exitMultiplicative(ExpressionParser.MultiplicativeContext ctx) { }
   /**
    * {@inheritDoc}
    *

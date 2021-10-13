@@ -29,10 +29,14 @@ import Configuration;
  * For more information, see reading 18 about parser generators, which explains
  * how to use Antlr and has links to reference information.
  */
-root : plus EOF;
-plus : times ('+' times)*;
-times : primitive ('*' primitive)*;
-primitive : INTEGER | DOUBLE | VARIABLE | '(' plus ')';
+root : expression EOF;
+expression : additive;
+additive: multiplicative ((plus | minus) multiplicative)*;
+plus: '+';
+minus: '-';
+multiplicative: primitive ((times) primitive)*;
+times: '*';
+primitive : '(' expression ')' | INTEGER | DOUBLE | VARIABLE | '-' primitive;
 INTEGER : [0-9]+;
 DOUBLE : [0-9]*'.'[0-9]+;
 VARIABLE : [a-zA-Z]+;
