@@ -33,6 +33,10 @@ public class ExpressionTest {
      * variable: case-sensitive, upper and lower case
      * Compare Plus to Times with equal construction
      * 
+     * differentiate() partitions the inputs as follows:
+     * Combination of Number, Variable, Plus, Minus, Times and Parenthesis
+     * Linked Times Expressions
+     * 
      */
     
     @Test(expected=AssertionError.class)
@@ -328,5 +332,39 @@ public class ExpressionTest {
     	assertFalse("Expected hashCode of Parenthesis p1 to be different from hashCode of Parenthesis p3", hashCode1.equals(hashCode2));
     	assertFalse("Expected hashCode of Parenthesis p1 to be different from hashCode of Parenthesis p4", hashCode1.equals(hashCode3));
     	assertFalse("Expected hashCode of Parenthesis p1 to be different from hashCode of Variable v1", hashCode1.equals(hashCode4));
+    }
+    
+    // covers differentiate()
+    @Test
+    public void testDifferentiate() {
+    	Expression left = new Variable("W");
+    	Expression right = new Number(5);
+    	
+    	Expression e1 = new Plus(left, right);
+    	Expression e2 = new Minus(left, right);
+    	Expression p1 = new Parenthesis(e1);
+    	Expression p2 = new Parenthesis(e2);
+    	Expression t = new Times(p1, p2);
+    	
+    	Expression d = t.differentiate("W");
+    	String expected = "( W + 5.0 ) * ( 1.0 - 0.0 ) + ( W - 5.0 ) * ( 1.0 + 0.0 )";
+    	
+    	assertEquals("Expected String \"( W + 5.0 ) * ( 1.0 - 0.0 ) + ( W - 5.0 ) * ( 1.0 + 0.0 )\"", expected, d.toString());
+    }
+    
+    @Test
+    public void testDifferentiateLinkedTimes() {
+    	Expression x1 = new Variable("x");
+    	Expression x2 = new Variable("x");
+    	Expression x3 = new Variable("x");
+    	Expression x4 = new Variable("x");
+    	Expression x1x2 = new Times(x2, x1);
+    	Expression x3x4 = new Times(x4, x3);
+    	Expression t = new Times(x3x4, x1x2);
+    	
+    	Expression d = t.differentiate("x");
+    	String expected = "( x * x ) * ( x * 1.0 + x * 1.0 ) + ( x * x ) * ( x * 1.0 + x * 1.0 )";
+    	
+    	assertEquals("Expected String \"( x * x ) * ( x * 1.0 + x * 1.0 ) + ( x * x ) * ( x * 1.0 + x * 1.0 )\"", expected, d.toString());
     }
 }

@@ -54,4 +54,12 @@ public class Parenthesis implements Expression {
 		return (int) op.hashCode() + center.hashCode() + cp.hashCode();
 	}
 
+	@Override
+	public Expression differentiate(String variable) {
+		// differentiate recursively left and right side
+		Expression newCenter = center.differentiate(variable);
+		return new Parenthesis(newCenter);
+		
+	}
+
 }

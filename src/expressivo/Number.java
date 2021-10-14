@@ -56,4 +56,10 @@ public class Number implements Expression {
 		return (int) value.hashCode();
 	}
 
+	@Override
+	public Expression differentiate(String variable) {
+		// single number differentiated with respect to a variable is 0
+		return new Number(0);
+	}
+
 }

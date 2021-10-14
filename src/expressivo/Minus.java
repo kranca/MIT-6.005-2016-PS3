@@ -54,4 +54,12 @@ public class Minus implements Expression {
 		return (left.hashCode() + right.hashCode())*3;
 	}
 
+	@Override
+	public Expression differentiate(String variable) {
+		// differentiate recursively left and right side
+		Expression newLeft = left.differentiate(variable);
+		Expression newRight = right.differentiate(variable);
+		return new Minus(newLeft, newRight);
+	}
+
 }

@@ -57,4 +57,54 @@ public class Times implements Expression {
 		return 3*(right.hashCode() + left.hashCode());
 	}
 
+	@Override
+	public Expression differentiate(String variable) {
+		// differentiate recursively left and right
+		// special use of instanceof in order to reduce use of parenthesis
+		Expression dLeft = left.differentiate(variable);
+		// if derivative of left side of the expression is instance of Times, Plus or Minus
+		if (dLeft instanceof Times || dLeft instanceof Plus || dLeft instanceof Minus) {
+			// wrap expression around Parenthesis
+			dLeft = new Parenthesis(dLeft);
+		}
+		else {
+			// do nothing
+		}
+		
+		// if derivative of right side of the expression is instance of Times, Plus or Minus
+		Expression dRight = right.differentiate(variable);
+		if (dRight instanceof Times || dRight instanceof Plus || dRight instanceof Minus) {
+			// wrap expression around Parenthesis
+			dRight = new Parenthesis(dRight);
+		}
+		else {
+			// do nothing
+		}
+		
+		Expression newLeft = left;
+		// if left side of the expression is instance of Times, Plus or Minus
+		if (left instanceof Times || left instanceof Plus || left instanceof Minus) {
+			// wrap expression around Parenthesis
+			newLeft = new Parenthesis(left);
+		}
+		else {
+			// do nothing
+		}
+		
+		Expression newRight = right;
+		// if right side of the expression is instance of Times, Plus or Minus
+		if (right instanceof Times || right instanceof Plus || right instanceof Minus) {
+			// wrap expression around Parenthesis
+			newRight = new Parenthesis(right);
+		}
+		else {
+			// do nothing
+		}
+		
+		Expression finalLeft = new Times(newLeft, dRight);
+		Expression finalRight = new Times(newRight, dLeft);
+		
+		return new Plus(finalLeft, finalRight);
+	}
+
 }

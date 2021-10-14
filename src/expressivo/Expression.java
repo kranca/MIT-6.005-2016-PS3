@@ -93,6 +93,12 @@ public interface Expression {
     @Override
     public int hashCode();
     
-    // TODO more instance methods
+    /**
+     * Differentiates Expression with respect to a specified variable.
+     * 
+     * @param variable - specified variable for differentiation
+     * @return differentiated expression
+     */
+    public Expression differentiate(String variable);
     
 }
