@@ -23,8 +23,13 @@ public class Commands {
      *         to the derivative, but doesn't need to be in simplest or canonical form.
      * @throws IllegalArgumentException if the expression or variable is invalid
      */
-    public static String differentiate(String expression, String variable) {
-        throw new RuntimeException("unimplemented");
+    public static String differentiate(String expression, String variable) throws IllegalArgumentException {
+        // parse String to Expression
+    	Expression e = Expression.parse(expression);
+    	// differentiate Expression
+        Expression d = e.differentiate(variable);
+        // return differentiated Expression in String form
+        return d.toString();
     }
     
     /**
