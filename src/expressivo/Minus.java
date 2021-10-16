@@ -1,5 +1,7 @@
 package expressivo;
 
+import java.util.Map;
+
 /**
  * @author Raul
  * immutable data type that represents a addition of two objects of type Expression
@@ -60,6 +62,38 @@ public class Minus implements Expression {
 		Expression newLeft = left.differentiate(variable);
 		Expression newRight = right.differentiate(variable);
 		return new Minus(newLeft, newRight);
+	}
+
+	@Override
+	public Expression simplify(Map<String, Double> environment) {
+		// update expression by simplifying recursively
+		Expression simplifiedLeft = left.simplify(environment);
+		Expression simplifiedRight = right.simplify(environment);
+		
+		if (simplifiedLeft.isNumber() && simplifiedRight.isNumber()) {
+			Double valueLeft = Double.valueOf(simplifiedLeft.toString());
+			Double valueRight = Double.valueOf(simplifiedRight.toString());
+			Double result = valueLeft - valueRight;
+			return new Number(result);
+		}
+		else if(simplifiedLeft.equals(simplifiedRight)) {
+			return new Number(0);
+		}
+		else {
+			return new Minus(simplifiedLeft, simplifiedRight);
+		}
+	}
+
+	@Override
+	public boolean isNumber() {
+		// not of Number instance
+		return false;
+	}
+	
+	@Override
+	public boolean isVariable() {
+		// not of Variable instance
+		return false;
 	}
 
 }

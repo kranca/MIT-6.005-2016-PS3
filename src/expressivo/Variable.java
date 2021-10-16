@@ -1,5 +1,7 @@
 package expressivo;
 
+import java.util.Map;
+
 /**
  * @author Raul
  * immutable data type that represents a Variable
@@ -62,6 +64,30 @@ public class Variable implements Expression {
 		else {
 			return new Number(0);
 		}
+	}
+
+	@Override
+	public Expression simplify(Map<String, Double> environment) {
+		// if variable name in environment return Number Expression of corresponding value
+		if (environment.containsKey(name)) {
+			return new Number(environment.get(name));
+		}
+		else {
+			//else return new Variable Expression with same name
+			return new Variable(name);
+		}
+	}
+
+	@Override
+	public boolean isNumber() {
+		// not of Number instance
+		return false;
+	}
+	
+	@Override
+	public boolean isVariable() {
+		// only Expression that returns true
+		return true;
 	}
 
 }

@@ -1,5 +1,7 @@
 package expressivo;
 
+import java.util.Map;
+
 /**
  * @author Raul
  * immutable data type that represents a right side parenthesis - close parenthesis
@@ -56,10 +58,34 @@ public class Parenthesis implements Expression {
 
 	@Override
 	public Expression differentiate(String variable) {
-		// differentiate recursively left and right side
+		// differentiate recursively
 		Expression newCenter = center.differentiate(variable);
 		return new Parenthesis(newCenter);
 		
+	}
+
+	@Override
+	public Expression simplify(Map<String, Double> environment) {
+		// simplify recursively and eliminate parenthesis if center is only Number or Variable
+		Expression newCenter = center.simplify(environment);
+		if (newCenter.isNumber() || newCenter.isVariable()) {
+			return newCenter;
+		}
+		else {
+			return new Parenthesis(newCenter);
+		}
+	}
+
+	@Override
+	public boolean isNumber() {
+		// not of Number instance
+		return false;
+	}
+	
+	@Override
+	public boolean isVariable() {
+		// not of Variable instance
+		return false;
 	}
 
 }

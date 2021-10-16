@@ -44,8 +44,13 @@ public class Commands {
      *         Additional simplifications to the expression may be done at the implementor's discretion.
      * @throws IllegalArgumentException if the expression is invalid
      */
-    public static String simplify(String expression, Map<String,Double> environment) {
-        throw new RuntimeException("unimplemented");
+    public static String simplify(String expression, Map<String,Double> environment) throws IllegalArgumentException {
+        // parse String to Expression
+    	Expression e = Expression.parse(expression);
+    	// simplify Expression
+    	Expression s = e.simplify(environment);
+    	// return simplified Expression in String form
+    	return s.toString();
     }
     
 }

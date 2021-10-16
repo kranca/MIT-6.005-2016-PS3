@@ -1,5 +1,7 @@
 package expressivo;
 
+import java.util.Map;
+
 /**
  * @author Raul
  * immutable data type that represents a positive number or zero
@@ -60,6 +62,24 @@ public class Number implements Expression {
 	public Expression differentiate(String variable) {
 		// single number differentiated with respect to a variable is 0
 		return new Number(0);
+	}
+
+	@Override
+	public Expression simplify(Map<String, Double> environment) {
+		// return new Expression with same value
+		return new Number(value);
+	}
+
+	@Override
+	public boolean isNumber() {
+		// only Expression that returns true
+		return true;
+	}
+	
+	@Override
+	public boolean isVariable() {
+		// not of Variable instance
+		return false;
 	}
 
 }

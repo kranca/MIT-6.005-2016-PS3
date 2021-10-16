@@ -5,6 +5,9 @@ package expressivo;
 
 import static org.junit.Assert.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Test;
 
 /**
@@ -365,6 +368,65 @@ public class ExpressionTest {
     	Expression d = t.differentiate("x");
     	String expected = "( x * x ) * ( x * 1.0 + x * 1.0 ) + ( x * x ) * ( x * 1.0 + x * 1.0 )";
     	
+    	assertEquals("Expected String \"( x * x ) * ( x * 1.0 + x * 1.0 ) + ( x * x ) * ( x * 1.0 + x * 1.0 )\"", expected, d.toString());
+    }
+    
+    // covers simplify()
+    @Test
+    public void testSimplifyEmptyEnvironment() {
+    	Map<String,Double> environment = new HashMap<>();
+    	
+    	Expression left = new Variable("W");
+    	Expression right = new Number(5);
+    	
+    	Expression e1 = new Plus(left, right);
+    	Expression e2 = new Minus(left, right);
+    	Expression p1 = new Parenthesis(e1);
+    	Expression p2 = new Parenthesis(e2);
+    	Expression t = new Times(p1, p2);
+    	
+    	Expression d = t.differentiate("W");
+    	String expected = "( W + 5.0 ) * ( 1.0 - 0.0 ) + ( W - 5.0 ) * ( 1.0 + 0.0 )";
+    	System.out.println(d.toString());
+    	System.out.println(d.simplify(environment).toString());
+    	assertEquals("Expected String \"( W + 5.0 ) * ( 1.0 - 0.0 ) + ( W - 5.0 ) * ( 1.0 + 0.0 )\"", expected, d.toString());
+    }
+    
+    @Test
+    public void testSimplifyWithEnvironment() {
+    	Map<String,Double> environment = new HashMap<>();
+    	environment.put("W", 10.0);
+    	Expression left = new Variable("W");
+    	Expression right = new Number(5);
+    	
+    	Expression e1 = new Plus(left, right);
+    	Expression e2 = new Minus(left, right);
+    	Expression p1 = new Parenthesis(e1);
+    	Expression p2 = new Parenthesis(e2);
+    	Expression t = new Times(p1, p2);
+    	
+    	Expression d = t.differentiate("W");
+    	String expected = "20.0";
+    	Expression s = d.simplify(environment);
+    	assertEquals("Expected String \"20.0\"", expected, s.toString());
+    }
+    
+    @Test
+    public void testSimplifyDifferentiatedLinkedTimes() {
+    	Map<String,Double> environment = new HashMap<>();
+    	
+    	Expression x1 = new Variable("x");
+    	Expression x2 = new Variable("x");
+    	Expression x3 = new Variable("x");
+    	Expression x4 = new Variable("x");
+    	Expression x1x2 = new Times(x2, x1);
+    	Expression x3x4 = new Times(x4, x3);
+    	Expression t = new Times(x3x4, x1x2);
+    	
+    	Expression d = t.differentiate("x");
+    	String expected = "( x * x ) * ( x * 1.0 + x * 1.0 ) + ( x * x ) * ( x * 1.0 + x * 1.0 )";
+    	System.out.println(d.toString());
+    	System.out.println(d.simplify(environment).toString());
     	assertEquals("Expected String \"( x * x ) * ( x * 1.0 + x * 1.0 ) + ( x * x ) * ( x * 1.0 + x * 1.0 )\"", expected, d.toString());
     }
 }

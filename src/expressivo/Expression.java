@@ -3,6 +3,8 @@
  */
 package expressivo;
 
+import java.util.Map;
+
 import org.antlr.v4.gui.Trees;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
@@ -55,7 +57,7 @@ public interface Expression {
         	
         	ParseTree tree = parser.root();
         	
-        	Trees.inspect(tree, parser);
+        	//Trees.inspect(tree, parser);
         	
         	ParseTreeWalker walker = new ParseTreeWalker();
         	
@@ -100,5 +102,24 @@ public interface Expression {
      * @return differentiated expression
      */
     public Expression differentiate(String variable);
+    
+    /**
+     * Simplifies an Expression using a given environment of variables and their numeric value
+     * @param environment - Map: Key --> variable names, Value --> numeric value of variable
+     * @return simplified Expression
+     */
+    public Expression simplify(Map<String,Double> environment);
+    
+    /**
+     * Evaluates if Expression is instance of Number without using instanceof operation
+     * @return true if Expression is instance of Number, false otherwise
+     */
+    public boolean isNumber();
+    
+    /**
+     * Evaluates if Expression is instance of Variable without using instanceof operation
+     * @return true if Expression is instance of Variable, false otherwise
+     */
+    public boolean isVariable();
     
 }

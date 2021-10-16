@@ -1,5 +1,7 @@
 package expressivo;
 
+import java.util.Map;
+
 /**
  * @author Raul
  * immutable data type that represents a multiplication of two objects of type Expression
@@ -47,7 +49,8 @@ public class Times implements Expression {
 		if(!(thatObject instanceof Times)) return false;
 		Times thatTimes = (Times) thatObject;
 		checkRep();
-		return (this.left.equals(thatTimes.left) && this.right.equals(thatTimes.right));
+		return (this.left.equals(thatTimes.left) && this.right.equals(thatTimes.right)
+				|| this.left.equals(thatTimes.right) && this.right.equals(thatTimes.left));
 	}
 	
 	@Override
@@ -105,6 +108,73 @@ public class Times implements Expression {
 		Expression finalRight = new Times(newRight, dLeft);
 		
 		return new Plus(finalLeft, finalRight);
+	}
+
+	@Override
+	public Expression simplify(Map<String, Double> environment) {
+		// update expression by simplifying recursively
+		Expression simplifiedLeft = left.simplify(environment);
+		Expression simplifiedRight = right.simplify(environment);
+		
+		// case left and right are numbers
+		if (simplifiedLeft.isNumber() && simplifiedRight.isNumber()) {
+			Double valueLeft = Double.valueOf(simplifiedLeft.toString());
+			Double valueRight = Double.valueOf(simplifiedRight.toString());
+			Double result = valueLeft * valueRight;
+			return new Number(result);
+		}
+		// case left is Number
+		else if (simplifiedLeft.isNumber() && !simplifiedRight.isNumber()) {
+			// case Number value is 1, reduce to simplified right side
+			if (Double.valueOf(simplifiedLeft.toString()).equals(1.0)) {
+				return simplifiedRight;
+			}
+			// case Number value is 0, reduce to Number with value zero
+			else if (Double.valueOf(simplifiedLeft.toString()).equals(0.0)) {
+				return new Number(0);
+			}
+			else {
+				return new Times(simplifiedLeft, simplifiedRight);
+			}
+		}
+		// case right is Number
+		else if (!simplifiedLeft.isNumber() && simplifiedRight.isNumber()) {
+			// case Number value is 1, reduce to simplified right side
+			if (Double.valueOf(simplifiedRight.toString()).equals(1.0)) {
+				return simplifiedLeft;
+			}
+			// case Number value is 0, reduce to Number with value zero
+			else if (Double.valueOf(simplifiedRight.toString()).equals(0.0)) {
+				return new Number(0);
+			}
+			else {
+				return new Times(simplifiedLeft, simplifiedRight);
+			}
+		}
+		// case left and right are instance of variable
+//		else if (simplifiedLeft.isVariable() && simplifiedRight.isVariable()) {
+//			if (simplifiedLeft.isNumber())
+//		}
+		else {
+			return new Times(simplifiedLeft, simplifiedRight);
+		}
+	}
+
+	@Override
+	public boolean isNumber() {
+		// not of Number instance
+		return false;
+	}
+	
+	@Override
+	public boolean isVariable() {
+		// only instance of variable if left or right are Variable and opposite side is Number or if both are variable
+		if (left.isNumber() && right.isVariable() || left.isVariable() && right.isNumber() || left.isVariable() && right.isVariable()) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 
 }
