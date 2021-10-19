@@ -122,4 +122,34 @@ public interface Expression {
      */
     public boolean isVariable();
     
+    /**
+     * Evaluates if Expression is instance of Times without using instanceof operation
+     * @return true if Expression is instance of Times, false otherwise
+     */
+    public boolean isTimes();
+    
+    /**
+     * Evaluates if Expression is constructed with left and right Expressions. Example: Plus, Times.
+     * @return true if Expression is constructed with left and Right Expressions, false otherwise
+     */
+    public boolean isLeftAndRightExpression();
+    
+    /**
+     * Gets numeric factor of an Expression. Example: 3*x gets factor 3.0
+     * @return factor
+     */
+    public Double getFactor();
+    
+    /**
+     * Gets numeric exponent of an Expression. Example: x*x*x*x gets exponent 4.0
+     * @return exponent
+     */
+    public Double getExponent();
+    
+    /**
+     * Gets name of Variable Expression or Variable component of Times Expression. Example: 3*x gets name "x"
+     * @return name
+     */
+    public String getVariable();
+    
 }

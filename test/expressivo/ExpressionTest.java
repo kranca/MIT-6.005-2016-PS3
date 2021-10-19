@@ -310,8 +310,8 @@ public class ExpressionTest {
     	assertTrue("Expected Parenthesis Expression p1 to equal Parenthesis Expression p2", p1.equals(p2));
     	assertTrue("Expected Parenthesis Expression p1 to equal Object o2", p1.equals(o2));
     	assertFalse("Expected Parenthesis Expression p1 not to equal Parenthesis Expression p3", p1.equals(p3));
-    	assertFalse("Expected Parenthesis Expression e1 not to equal Parenthesis Expression p4", p1.equals(p4));
-    	assertFalse("Expected Parenthesis Expression e1 not to equal Parenthesis Expression p5", p1.equals(p5));
+    	assertFalse("Expected Parenthesis Expression p1 not to equal Parenthesis Expression p4", p1.equals(p4));
+    	assertFalse("Expected Parenthesis Expression p1 not to equal Parenthesis Expression p5", p1.equals(p5));
     }
     
     // covers Parenthesis hashCode()
@@ -386,10 +386,9 @@ public class ExpressionTest {
     	Expression t = new Times(p1, p2);
     	
     	Expression d = t.differentiate("W");
-    	String expected = "( W + 5.0 ) * ( 1.0 - 0.0 ) + ( W - 5.0 ) * ( 1.0 + 0.0 )";
-    	System.out.println(d.toString());
-    	System.out.println(d.simplify(environment).toString());
-    	assertEquals("Expected String \"( W + 5.0 ) * ( 1.0 - 0.0 ) + ( W - 5.0 ) * ( 1.0 + 0.0 )\"", expected, d.toString());
+    	Expression s = d.simplify(environment);
+    	String expected = "( W + 5.0 ) + ( W - 5.0 )";
+    	assertEquals("Expected String \"( W + 5.0 ) + ( W - 5.0 )\"", expected, s.toString());
     }
     
     @Test
@@ -424,9 +423,81 @@ public class ExpressionTest {
     	Expression t = new Times(x3x4, x1x2);
     	
     	Expression d = t.differentiate("x");
-    	String expected = "( x * x ) * ( x * 1.0 + x * 1.0 ) + ( x * x ) * ( x * 1.0 + x * 1.0 )";
-    	System.out.println(d.toString());
-    	System.out.println(d.simplify(environment).toString());
-    	assertEquals("Expected String \"( x * x ) * ( x * 1.0 + x * 1.0 ) + ( x * x ) * ( x * 1.0 + x * 1.0 )\"", expected, d.toString());
+    	String expected = "2.0 * 2.0 * x * x * x";
+    	
+    	assertEquals("Expected String \"2.0 * 2.0 * x * x * x\"", expected, d.simplify(environment).toString());
+    }
+    
+    // covers Power toString()
+    @Test
+    public void testPowerToString() {
+    	Expression x = new Variable("x");
+    	Expression p1 = new Power(x, 4.0);
+    	Expression p2 = new Power(x, 1.0);
+    	
+    	String expected1 = "x * x * x * x";
+    	String expected2 = "x";
+    	
+    	assertEquals("Expected String \"x * x * x * x\"", expected1, p1.toString());
+    	assertEquals("Expected String \"x\"", expected2, p2.toString());
+    }
+    
+    // covers Power equals()
+    @Test
+    public void testPowerEquals() {
+    	Expression x = new Variable("x");
+    	Expression p1 = new Power(x, 4.0);
+    	Expression p2 = new Power(new Variable("x"), 4.0);
+    	Expression p3 = new Plus(x, new Number(4));
+    	Expression m1 = new Minus(x, new Number(4));
+    	Expression t1 = new Times(x, new Number(4));
+    	
+    	Object o2 = p2;
+    	
+    	assertTrue("Expected Power Expression p1 to equal Power Expression p2", p1.equals(p2));
+    	assertTrue("Expected Power Expression p1 to equal Object o2", p1.equals(o2));
+    	assertFalse("Expected Power Expression p1 not to equal Plus Expression p3", p1.equals(p3));
+    	assertFalse("Expected Power Expression p1 not to equal Minus Expression p4", p1.equals(m1));
+    	assertFalse("Expected Power Expression p1 not to equal Times Expression p5", p1.equals(t1));
+    }
+    
+    // covers Power hashCode()
+    @Test
+    public void testPowerHashCode() {
+    	Expression x = new Variable("x");
+    	Expression p1 = new Power(x, 4.0);
+    	Expression p2 = new Power(new Variable("x"), 4.0);
+    	Expression p3 = new Plus(x, new Number(4));
+    	Expression m1 = new Minus(x, new Number(4));
+    	Expression t1 = new Times(x, new Number(4));
+    	Expression x1 = new Power(x, 1.0);
+    	
+    	Integer hashCode1 = p1.hashCode();
+    	Integer hashCode2 = p2.hashCode();
+    	Integer hashCode3 = p3.hashCode();
+    	Integer hashCode4 = m1.hashCode();
+    	Integer hashCode5 = t1.hashCode();
+    	Integer hashCode6 = x.hashCode();
+    	Integer hashCode7 = x1.hashCode();
+    	
+    	
+    	assertEquals("Expected hashCode of Power p1 to equal hashCode of Parenthesis p2", hashCode1, hashCode2);
+    	assertFalse("Expected hashCode of Power p1 to be different from hashCode of Plus p3", hashCode1.equals(hashCode3));
+    	assertFalse("Expected hashCode of Power p1 to be different from hashCode of Minus m1", hashCode1.equals(hashCode4));
+    	assertFalse("Expected hashCode of Power p1 to be different from hashCode of Times t1", hashCode1.equals(hashCode5));
+    	assertFalse("Expected hashCode of Power p1 to be different from hashCode of Variable x", hashCode6.equals(hashCode7));
+    }
+    
+    // covers Power simplify
+    @Test
+    public void testPowerSimplify() {
+    	Map<String,Double> environment = new HashMap<>();
+    	environment.put("x", 3.0);
+    	Expression x = new Variable("x");
+    	Expression p = new Power(x, 3.0);
+    	
+    	String expected = "27.0";
+    	Expression s = p.simplify(environment);
+    	assertEquals("Expected String \"27.0\"", expected, s.toString());
     }
 }

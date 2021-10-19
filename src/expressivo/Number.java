@@ -78,8 +78,36 @@ public class Number implements Expression {
 	
 	@Override
 	public boolean isVariable() {
-		// not of Variable instance
+		// not instance of Variable
 		return false;
+	}
+	
+	@Override
+	public boolean isTimes() {
+		// not instance of Times
+		return false;
+	}
+	
+	@Override
+	public boolean isLeftAndRightExpression() {
+		// no left and right Expression construction
+		return false;
+	}
+
+	@Override
+	public Double getFactor() {
+		// Since Number has no Variable component, returns only its value
+		return value;
+	}
+	
+	@Override
+	public Double getExponent() {
+		return 1.0;
+	}
+
+	@Override
+	public String getVariable() {
+		throw new UnsupportedOperationException();
 	}
 
 }

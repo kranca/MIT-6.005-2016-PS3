@@ -5,6 +5,9 @@ package expressivo;
 
 import static org.junit.Assert.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Test;
 
 /**
@@ -21,9 +24,9 @@ public class CommandsTest {
     }
     
     
-    // TODO tests for Commands.differentiate() and Commands.simplify()
+    // tests for Commands.differentiate() and Commands.simplify()
     
- // covers differentiate()
+    // covers differentiate()
     @Test
     public void testDifferentiate() {
     	String expressionString = "(W+5)*(W-5)";
@@ -38,9 +41,34 @@ public class CommandsTest {
     public void testDifferentiateLinkedTimes() {
     	String expressionString = "x*x*x*x";
     	String differentiatedExpression = Commands.differentiate(expressionString, "x");
-    	System.out.println(differentiatedExpression);
+    	
     	String expected = "x * ( x * ( x * 1.0 + x * 1.0 ) + ( x * x ) * 1.0 ) + ( x * x * x ) * 1.0";
     	
     	assertEquals("Expected String \"x * ( x * ( x * 1.0 + x * 1.0 ) + ( x * x ) * 1.0 ) + ( x * x * x ) * 1.0\"", expected, differentiatedExpression);
+    }
+    
+    // covers simplify()
+    @Test
+    public void testSimplifyEmptyEnvironment() {
+    	Map<String,Double> environment = new HashMap<>();
+    	String expressionString = "(W+5)*(W-5)";
+    	String differentiatedExpression = Commands.differentiate(expressionString, "W");
+    	String simplifiedExpression = Commands.simplify(differentiatedExpression, environment);
+    	
+    	String expected = "( W + 5.0 ) + ( W - 5.0 )";
+    	
+    	assertEquals("Expected String \"( W + 5.0 ) + ( W - 5.0 )\"", expected, simplifiedExpression);
+    }
+    
+    @Test
+    public void testSimplifyWithEnvironment() {
+    	Map<String,Double> environment = new HashMap<>();
+    	environment.put("W", 5.0);
+    	String expressionString = "(W+5)*(W-5)";
+    	String simplifiedExpression = Commands.simplify(expressionString, environment);
+    	
+    	String expected = "0.0";
+    	
+    	assertEquals("Expected String \"0.0\"", expected, simplifiedExpression);
     }
 }

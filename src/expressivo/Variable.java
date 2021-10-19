@@ -80,7 +80,7 @@ public class Variable implements Expression {
 
 	@Override
 	public boolean isNumber() {
-		// not of Number instance
+		// not instance of Number
 		return false;
 	}
 	
@@ -88,6 +88,33 @@ public class Variable implements Expression {
 	public boolean isVariable() {
 		// only Expression that returns true
 		return true;
+	}
+	
+	@Override
+	public boolean isTimes() {
+		// not instance of Times
+		return false;
+	}
+	
+	@Override
+	public boolean isLeftAndRightExpression() {
+		// no left and right Expression construction
+		return false;
+	}
+
+	@Override
+	public Double getFactor() {
+		return 1.0;
+	}
+	
+	@Override
+	public Double getExponent() {
+		return 1.0;
+	}
+
+	@Override
+	public String getVariable() {
+		return name;
 	}
 
 }

@@ -63,6 +63,7 @@ public class Plus implements Expression {
 		// differentiate recursively left and right side
 		Expression newLeft = left.differentiate(variable);
 		Expression newRight = right.differentiate(variable);
+		
 		return new Plus(newLeft, newRight);
 	}
 
@@ -82,12 +83,37 @@ public class Plus implements Expression {
 		// case left and right are instance of Variable
 		else if (simplifiedLeft.isVariable() && simplifiedRight.isVariable()) {
 			// and left equals right
-			if (simplifiedLeft.equals(simplifiedRight)) {
+			if (simplifiedLeft.toString().equals(simplifiedRight.toString())) {
 				return new Times(new Number(2), simplifiedLeft);
 			}
 			else {
 				return new Plus(simplifiedLeft, simplifiedRight);
 			}
+		}
+		// case left or right are instance of Times
+		else if(simplifiedLeft.isTimes() || simplifiedRight.isTimes()) {
+			if (simplifiedLeft.toString().equals(simplifiedRight.toString())) {
+				return new Times(new Number(2), simplifiedLeft);
+			}
+			else if (simplifiedLeft.isTimes() && simplifiedRight.isVariable()) {
+				Expression newFactor = new Number(simplifiedLeft.getFactor() + simplifiedRight.getFactor());
+				Expression newVariable = new Variable(simplifiedRight.getVariable());
+				return new Times(newFactor, new Power(newVariable, simplifiedLeft.getExponent()));
+			}
+			else if (simplifiedLeft.isVariable() && simplifiedRight.isTimes()) {
+				Expression newFactor = new Number(simplifiedLeft.getFactor() + simplifiedRight.getFactor());
+				Expression newVariable = new Variable(simplifiedLeft.getVariable());
+				return new Times(newFactor, new Power(newVariable, simplifiedLeft.getExponent()));
+			}
+			else {
+				return new Plus(simplifiedLeft, simplifiedRight);
+			}
+		}
+		else if (simplifiedLeft.getFactor().equals(0.0)) {
+			return simplifiedRight;
+		}
+		else if (simplifiedRight.getFactor().equals(0.0)) {
+			return simplifiedLeft;
 		}
 		else {
 			return new Plus(simplifiedLeft, simplifiedRight);
@@ -96,14 +122,41 @@ public class Plus implements Expression {
 
 	@Override
 	public boolean isNumber() {
-		// not of Number instance
+		// not instance of Number
 		return false;
 	}
 	
 	@Override
 	public boolean isVariable() {
-		// not of Variable instance
+		// not instance of Variable
 		return false;
+	}
+	
+	@Override
+	public boolean isTimes() {
+		// not instance of Times
+		return false;
+	}
+	
+	@Override
+	public boolean isLeftAndRightExpression() {
+		// left and right Expression construction
+		return true;
+	}
+
+	@Override
+	public Double getFactor() {
+		return 1.0;
+	}
+	
+	@Override
+	public Double getExponent() {
+		return 1.0;
+	}
+
+	@Override
+	public String getVariable() {
+		throw new UnsupportedOperationException();
 	}
 
 }

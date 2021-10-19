@@ -86,14 +86,41 @@ public class Minus implements Expression {
 
 	@Override
 	public boolean isNumber() {
-		// not of Number instance
+		// not instance of Number
 		return false;
 	}
 	
 	@Override
 	public boolean isVariable() {
-		// not of Variable instance
+		// not instance of Variable
 		return false;
+	}
+	
+	@Override
+	public boolean isTimes() {
+		// not instance of Times
+		return false;
+	}
+	
+	@Override
+	public boolean isLeftAndRightExpression() {
+		// left and right Expression construction
+		return true;
+	}
+
+	@Override
+	public Double getFactor() {
+		return 1.0;
+	}
+	
+	@Override
+	public Double getExponent() {
+		return 1.0;
+	}
+
+	@Override
+	public String getVariable() {
+		throw new UnsupportedOperationException();
 	}
 
 }

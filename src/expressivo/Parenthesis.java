@@ -68,7 +68,7 @@ public class Parenthesis implements Expression {
 	public Expression simplify(Map<String, Double> environment) {
 		// simplify recursively and eliminate parenthesis if center is only Number or Variable
 		Expression newCenter = center.simplify(environment);
-		if (newCenter.isNumber() || newCenter.isVariable()) {
+		if (newCenter.isNumber() || newCenter.isVariable() || newCenter.isTimes()) {
 			return newCenter;
 		}
 		else {
@@ -78,14 +78,41 @@ public class Parenthesis implements Expression {
 
 	@Override
 	public boolean isNumber() {
-		// not of Number instance
+		// not instance of Number
 		return false;
 	}
 	
 	@Override
 	public boolean isVariable() {
-		// not of Variable instance
+		// not instance of Variable
 		return false;
+	}
+	
+	@Override
+	public boolean isTimes() {
+		// not instance of Times
+		return false;
+	}
+	
+	@Override
+	public boolean isLeftAndRightExpression() {
+		// no left and right Expression construction
+		return false;
+	}
+
+	@Override
+	public Double getFactor() {
+		return 1.0;
+	}
+	
+	@Override
+	public Double getExponent() {
+		return 1.0;
+	}
+
+	@Override
+	public String getVariable() {
+		throw new UnsupportedOperationException();
 	}
 
 }
