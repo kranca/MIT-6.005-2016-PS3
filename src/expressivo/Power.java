@@ -22,6 +22,7 @@ public class Power implements Expression {
 	
 	private final Expression variable;
 	private final Double power;
+	private boolean reducedExpression = false;
 	
 	private void checkRep() {
 		assert variable != null;
@@ -41,12 +42,16 @@ public class Power implements Expression {
 	
 	@Override
 	public String toString() {
-		Expression expanded = variable;
-		for (int i = 1; i < power; ++i) {
-    		expanded = new Times(variable, expanded);
-    	}
-		return expanded.toString();
-		//return variable + "" + power.toString();
+		if (reducedExpression) {
+			return variable + "^" + power.toString();
+		}
+		else {
+			Expression expanded = variable;
+			for (int i = 1; i < power; ++i) {
+	    		expanded = new Times(variable, expanded);
+	    	}
+			return expanded.toString();
+		}
 	}
 	
 	@Override
@@ -68,6 +73,18 @@ public class Power implements Expression {
 	public Expression differentiate(String variable) {
 		// Power Expression only used to simplify Expressions
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Expression expand() {
+		// no further expansion possible
+		return new Power(variable, power);
+	}
+	
+	@Override
+	public Expression reduce() {
+		// no further reduction possible
+		return new Power(variable, power);
 	}
 
 	@Override
@@ -103,8 +120,31 @@ public class Power implements Expression {
 	}
 
 	@Override
-	public boolean isLeftAndRightExpression() {
-		// no left and right Expression
+	public boolean isPlus() {
+		// not instance of Plus
+		return false;
+	}
+
+	@Override
+	public boolean isMinus() {
+		// not instance of Minus
+		return false;
+	}
+
+	@Override
+	public boolean hasSameVariable(Expression thatVariable) {
+		// 
+		if (this.getVariable().equals(thatVariable.getVariable()) && this.getExponent().equals(thatVariable.getExponent())) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	@Override
+	public boolean isParenthesis() {
+		// not instance of Parenthesis
 		return false;
 	}
 
@@ -121,6 +161,16 @@ public class Power implements Expression {
 	@Override
 	public String getVariable() {
 		return variable.getVariable();
+	}
+
+	@Override
+	public Expression getLeft() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Expression getRight() {
+		throw new UnsupportedOperationException();
 	}
 
 }

@@ -47,8 +47,12 @@ public class Commands {
     public static String simplify(String expression, Map<String,Double> environment) throws IllegalArgumentException {
         // parse String to Expression
     	Expression e = Expression.parse(expression);
+    	// expand Expression
+    	Expression expanded = e.expand();
+    	// reduce Expression
+    	Expression reduced = expanded.reduce();
     	// simplify Expression
-    	Expression s = e.simplify(environment);
+    	Expression s = reduced.simplify(environment);
     	// return simplified Expression in String form
     	return s.toString();
     }

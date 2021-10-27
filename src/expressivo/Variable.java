@@ -67,6 +67,18 @@ public class Variable implements Expression {
 	}
 
 	@Override
+	public Expression expand() {
+		// no further expansion possible
+		return new Variable(name);
+	}
+	
+	@Override
+	public Expression reduce() {
+		// no further reduction possible
+		return new Variable(name);
+	}
+
+	@Override
 	public Expression simplify(Map<String, Double> environment) {
 		// if variable name in environment return Number Expression of corresponding value
 		if (environment.containsKey(name)) {
@@ -95,10 +107,33 @@ public class Variable implements Expression {
 		// not instance of Times
 		return false;
 	}
+
+	@Override
+	public boolean isPlus() {
+		// not instance of Plus
+		return false;
+	}
+
+	@Override
+	public boolean isMinus() {
+		// not instance of Minus
+		return false;
+	}
 	
 	@Override
-	public boolean isLeftAndRightExpression() {
-		// no left and right Expression construction
+	public boolean hasSameVariable(Expression thatVariable) {
+		// 
+		if (this.getVariable().equals(thatVariable.getVariable()) && this.getExponent().equals(thatVariable.getExponent())) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	@Override
+	public boolean isParenthesis() {
+		// not instance of Parenthesis
 		return false;
 	}
 
@@ -115,6 +150,16 @@ public class Variable implements Expression {
 	@Override
 	public String getVariable() {
 		return name;
+	}
+
+	@Override
+	public Expression getLeft() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Expression getRight() {
+		throw new UnsupportedOperationException();
 	}
 
 }

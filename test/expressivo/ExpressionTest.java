@@ -24,21 +24,33 @@ public class ExpressionTest {
      * Plus: Variable + Number, 
      * Times: Variable + Number
      * Minus: Variable + Number
+     * Power: power = 1, power > 1
      * Groupings with Parenthesis: Plus Times Minus
      * 
      * equals() partitions the inputs as follows:
      * Number: Number to Number, Number to Object
      * Variable: case-sensitive, upper and lower case
      * Compare Plus to Times with equal construction
+     * Parenthesis: combinations of other Expressions
+     * Power: combinations of other Expressions
      * 
      * hashCode() partitions the inputs as follows:
      * Number: Number to Number, Number to Object
      * variable: case-sensitive, upper and lower case
      * Compare Plus to Times with equal construction
+     * Parenthesis: combinations of other Expressions
+     * Power: combinations of other Expressions
      * 
      * differentiate() partitions the inputs as follows:
      * Combination of Number, Variable, Plus, Minus, Times and Parenthesis
      * Linked Times Expressions
+     * 
+     * additional methods:
+     * expand(): sum of different powers
+     * reduce(): sum of different powers
+     * hasSameVariable(): combination of different powers
+     * getExponent(): combination of different powers
+     * getFactor()
      * 
      */
     
@@ -48,7 +60,7 @@ public class ExpressionTest {
     }
     
     
-    // TODO tests for Expression
+    // tests for Expression
     
     //covers Number Double constructor and toString()
     @Test
@@ -366,7 +378,7 @@ public class ExpressionTest {
     	Expression t = new Times(x3x4, x1x2);
     	
     	Expression d = t.differentiate("x");
-    	String expected = "( x * x ) * ( x * 1.0 + x * 1.0 ) + ( x * x ) * ( x * 1.0 + x * 1.0 )";
+    	String expected = "x * x * ( x * 1.0 + x * 1.0 ) + x * x * ( x * 1.0 + x * 1.0 )";
     	
     	assertEquals("Expected String \"( x * x ) * ( x * 1.0 + x * 1.0 ) + ( x * x ) * ( x * 1.0 + x * 1.0 )\"", expected, d.toString());
     }
@@ -387,8 +399,9 @@ public class ExpressionTest {
     	
     	Expression d = t.differentiate("W");
     	Expression s = d.simplify(environment);
-    	String expected = "( W + 5.0 ) + ( W - 5.0 )";
-    	assertEquals("Expected String \"( W + 5.0 ) + ( W - 5.0 )\"", expected, s.toString());
+    	String expected = "( W + 5.0 ) * 1.0 + ( W - 5.0 ) * 1.0";
+    	
+    	assertEquals("Expected String \"( W + 5.0 ) * 1.0 + ( W - 5.0 ) * 1.0\"", expected, s.toString());
     }
     
     @Test
@@ -423,9 +436,9 @@ public class ExpressionTest {
     	Expression t = new Times(x3x4, x1x2);
     	
     	Expression d = t.differentiate("x");
-    	String expected = "2.0 * 2.0 * x * x * x";
+    	String expected = "x * x * ( x * 1.0 + x * 1.0 ) + x * x * ( x * 1.0 + x * 1.0 )";
     	
-    	assertEquals("Expected String \"2.0 * 2.0 * x * x * x\"", expected, d.simplify(environment).toString());
+    	assertEquals("Expected String \"x * x * ( x * 1.0 + x * 1.0 ) + x * x * ( x * 1.0 + x * 1.0 )\"", expected, d.simplify(environment).toString());
     }
     
     // covers Power toString()
@@ -499,5 +512,81 @@ public class ExpressionTest {
     	String expected = "27.0";
     	Expression s = p.simplify(environment);
     	assertEquals("Expected String \"27.0\"", expected, s.toString());
+    }
+    
+    // covers additional methods
+    
+    // covers expand()
+    @Test
+    public void testExpands() {
+    	String expressionString = "x*x*x*x+x*x*x";
+    	Expression e = Expression.parse(expressionString);
+    	Expression d = e.differentiate("x");
+    	Expression expanded = d.expand();
+    	
+    	String expected = "x * 1.0 * x * x + x * 1.0 * x * x + x * x * 1.0 * x + x * x * x * 1.0 + x * 1.0 * x + x * 1.0 * x + x * x * 1.0";
+    	assertEquals("Expected String \"x * 1.0 * x * x + x * 1.0 * x * x + x * x * 1.0 * x + x * x * x * 1.0 + x * 1.0 * x + x * 1.0 * x + x * x * 1.0\"", expected, expanded.toString());
+    }
+    
+    // covers reduce()
+    @Test
+    public void testReduce() {
+    	Map<String,Double> environment = new HashMap<>();
+    	environment.put("x", 2.0);
+    	
+    	String expressionString = "5*x*x*x*x+3*x*x*x";
+    	Expression e = Expression.parse(expressionString);
+    	Expression d = e.differentiate("x");
+    	Expression expanded = d.expand();
+    	Expression reduced = expanded.reduce();
+    	Expression simplified = reduced.simplify(environment);
+    	
+    	String expected = "20.0 * x * x * x + 9.0 * x * x";
+    	assertEquals("Expected String \"20.0 * x * x * x + 9.0 * x * x\"", expected, reduced.toString());
+    	assertEquals("Expected String \"196.0\"", "196.0", simplified.toString());
+    }
+    
+    @Test
+    public void testReduce2() {
+    	Map<String,Double> environment = new HashMap<>();
+    	environment.put("x", 2.0);
+    	
+    	String expressionString = "x*x*x*x+x*x*x";
+    	Expression e = Expression.parse(expressionString);
+    	Expression d = e.differentiate("x");
+    	Expression expanded = d.expand();
+    	Expression reduced = expanded.reduce();
+    	Expression simplified = reduced.simplify(environment);
+    	//System.out.println(reduced);
+    	String expected = "4.0 * x * x * x + 3.0 * x * x";
+    	assertEquals("Expected String \"4.0 * x * x * x + 3.0 * x * x\"", expected, reduced.toString());
+    	assertEquals("Expected String \"44.0\"", "44.0", simplified.toString());
+    }
+    
+    // covers hasSameVariable()
+    @Test
+    public void testHasSameVariable() {
+    	Expression left = new Times(new Number(2), new Variable("z"));
+    	Expression right = new Times(new Power(new Variable("z"), 2.0), new Number(5));
+    	Expression left2 = new Times(new Number(2), new Power(new Variable("z"), 2.0));
+    	
+    	assertFalse("Expected left Variable different from right Variable", left.hasSameVariable(right));
+    	assertTrue("Expected left Variable equal to right Variable", left2.hasSameVariable(right));
+    }
+    
+    // covers getExponent()
+    @Test
+    public void testGetExponent() {
+    	Expression e = new Times(new Power(new Variable("meters"), 3.0), new Number(5));
+    	
+    	assertTrue("Expected exponent \"3.0\"", e.getExponent().equals(3.0));
+    }
+    
+ // covers getFactor()
+    @Test
+    public void testGetFactor() {
+    	Expression e = new Times(new Power(new Variable("meters"), 3.0), new Number(5));
+    	
+    	assertTrue("Expected exponent \"3.0\"", e.getFactor().equals(5.0));
     }
 }

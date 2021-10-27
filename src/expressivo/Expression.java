@@ -5,7 +5,8 @@ package expressivo;
 
 import java.util.Map;
 
-import org.antlr.v4.gui.Trees;
+// uncomment to activate graphical tree visualization
+//import org.antlr.v4.gui.Trees;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import expressivo.parser.ExpressionLexer;
@@ -57,7 +58,8 @@ public interface Expression {
         	
         	ParseTree tree = parser.root();
         	
-        	//Trees.inspect(tree, parser);
+        	// uncomment to activate graphical tree visualization
+//        	Trees.inspect(tree, parser);
         	
         	ParseTreeWalker walker = new ParseTreeWalker();
         	
@@ -104,6 +106,18 @@ public interface Expression {
     public Expression differentiate(String variable);
     
     /**
+     * Expands Expression by multiplying factors and reducing parenthesis.
+     * @return Expanded Expression without Parenthesis
+     */
+    public Expression expand();
+    
+    /**
+     * Reduces Expression by merging together equal variables.
+     * @return reduced Expression
+     */
+    public Expression reduce();
+    
+    /**
      * Simplifies an Expression using a given environment of variables and their numeric value
      * @param environment - Map: Key --> variable names, Value --> numeric value of variable
      * @return simplified Expression
@@ -129,10 +143,30 @@ public interface Expression {
     public boolean isTimes();
     
     /**
-     * Evaluates if Expression is constructed with left and right Expressions. Example: Plus, Times.
-     * @return true if Expression is constructed with left and Right Expressions, false otherwise
+     * Evaluates if Expression is instance of Plus without using instanceof operation
+     * @return true if Expression is instance of Plus, false otherwise
      */
-    public boolean isLeftAndRightExpression();
+    public boolean isPlus();
+    
+    /**
+     * Evaluates if Expression is instance of Minus without using instanceof operation
+     * @return true if Expression is instance of Minus, false otherwise
+     */
+    public boolean isMinus();
+    
+    /**
+     * Evaluates if Expression is instance of Parenthesis without using instanceof operation
+     * @return true if Expression is instance of Parenthesis, false otherwise
+     */
+    public boolean isParenthesis();
+    
+    /**
+     * Evaluates if this Variable Expression has the same Variable Expression as thatVariable.
+     * Example: 2*x*x*x has the same Variable 5*x*x*x but not the same variable as 5*x*x or 5*y*y*y.
+     * @param thatVariable Variable Expression to compare to
+     * @return true if Variable within the Expression is the same, false otherwise
+     */
+    public boolean hasSameVariable(Expression thatVariable);
     
     /**
      * Gets numeric factor of an Expression. Example: 3*x gets factor 3.0
@@ -147,9 +181,21 @@ public interface Expression {
     public Double getExponent();
     
     /**
-     * Gets name of Variable Expression or Variable component of Times Expression. Example: 3*x gets name "x"
+     * Gets name of Variable Expression or Variable component of Times Expression. Example: Expression "3.0 * x" or "x * x" gets String "x"
      * @return name
      */
     public String getVariable();
+    
+    /**
+     * Gets left side Expression of Plus, Minus or Times. Example: "3 * x" gets Number Expression "3.0"
+     * @return left side Expression
+     */
+    public Expression getLeft();
+    
+    /**
+     * Gets right side Expression of Plus, Minus or Times. Example: 3.0 * x gets Variable Expression "x"
+     * @return
+     */
+    public Expression getRight();
     
 }

@@ -65,6 +65,18 @@ public class Number implements Expression {
 	}
 
 	@Override
+	public Expression expand() {
+		// no further expansion possible
+		return new Number(value);
+	}
+	
+	@Override
+	public Expression reduce() {
+		// no further reduction possible
+		return new Number(value);
+	}
+
+	@Override
 	public Expression simplify(Map<String, Double> environment) {
 		// return new Expression with same value
 		return new Number(value);
@@ -87,10 +99,28 @@ public class Number implements Expression {
 		// not instance of Times
 		return false;
 	}
+
+	@Override
+	public boolean isPlus() {
+		// not instance of Plus
+		return false;
+	}
+
+	@Override
+	public boolean isMinus() {
+		// not instance of Minus
+		return false;
+	}
 	
 	@Override
-	public boolean isLeftAndRightExpression() {
-		// no left and right Expression construction
+	public boolean hasSameVariable(Expression thatVariable) {
+		// not instance of Variable
+		return false;
+	}
+	
+	@Override
+	public boolean isParenthesis() {
+		// not instance of Parenthesis
 		return false;
 	}
 
@@ -107,6 +137,16 @@ public class Number implements Expression {
 
 	@Override
 	public String getVariable() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Expression getLeft() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Expression getRight() {
 		throw new UnsupportedOperationException();
 	}
 

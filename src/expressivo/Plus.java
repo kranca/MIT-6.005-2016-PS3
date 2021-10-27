@@ -68,6 +68,71 @@ public class Plus implements Expression {
 	}
 
 	@Override
+	public Expression expand() {
+		// expand recursively left and right
+		Expression newLeft = left.expand();
+		Expression newRight = right.expand();
+		
+		return new Plus(newLeft, newRight);
+	}
+	
+	@Override
+	public Expression reduce() {
+		// reduce recursively left and right
+		Expression rLeft = left.reduce();
+		Expression rRight = right.reduce();
+		
+		//case left and right are same Variable
+		if (rLeft.isVariable() && rRight.isVariable() && rLeft.getVariable().equals(rRight.getVariable())) {
+			final Double newFactor = rLeft.getFactor() + rRight.getFactor();
+			return new Times(new Number(newFactor), rLeft).reduce();
+		}
+		// case left is Times and right is Variable
+		else if (rLeft.isTimes() && rRight.isVariable() && rLeft.hasSameVariable(rRight)) {
+			if (rLeft.getLeft().isVariable() || rLeft.getRight().isVariable()) {
+				final Double newFactor = rLeft.getFactor() + rRight.getFactor();
+				return new Times(new Number(newFactor), rRight).reduce();
+			}
+			else {
+				return new Plus(rLeft, rRight);
+			}
+		}
+		// case left is Variable and right is Times
+		else if (rLeft.isVariable() && rRight.isTimes() && rLeft.hasSameVariable(rRight)) {
+			if (rRight.getLeft().isVariable() || rRight.getRight().isVariable()) {
+				final Double newFactor = rLeft.getFactor() + rRight.getFactor();
+				return new Times(new Number(newFactor), rLeft).reduce();
+			}
+			else {
+				return new Plus(rLeft, rRight);
+			}
+		}
+		// case left and right are Times and equal
+		else if (rLeft.isTimes() && rRight.isTimes() && rLeft.hasSameVariable(rRight)) {
+			final Double newFactor = rLeft.getFactor() + rRight.getFactor();
+			if (!rLeft.getLeft().isNumber()) {
+				return new Times(new Number(newFactor), rLeft.getLeft()).reduce();
+			}
+			else if (!rLeft.getRight().isNumber()) {
+				return new Times(new Number(newFactor), rLeft.getRight()).reduce();
+			}
+			else {
+				return new Plus(rLeft, rRight);
+			}
+		}
+		// case left is Number 0
+		else if (rLeft.isNumber() && rLeft.getFactor().equals(0.0)) {
+			return rRight;
+		}
+		else if (rRight.isNumber() && rRight.getFactor().equals(0.0)) {
+			return rLeft;
+		}
+		else {
+			return new Plus(rLeft, rRight);
+		}
+	}
+
+	@Override
 	public Expression simplify(Map<String, Double> environment) {
 		// update expression by simplifying recursively
 		Expression simplifiedLeft = left.simplify(environment);
@@ -79,41 +144,6 @@ public class Plus implements Expression {
 			Double valueRight = Double.valueOf(simplifiedRight.toString());
 			Double result = valueLeft + valueRight;
 			return new Number(result);
-		}
-		// case left and right are instance of Variable
-		else if (simplifiedLeft.isVariable() && simplifiedRight.isVariable()) {
-			// and left equals right
-			if (simplifiedLeft.toString().equals(simplifiedRight.toString())) {
-				return new Times(new Number(2), simplifiedLeft);
-			}
-			else {
-				return new Plus(simplifiedLeft, simplifiedRight);
-			}
-		}
-		// case left or right are instance of Times
-		else if(simplifiedLeft.isTimes() || simplifiedRight.isTimes()) {
-			if (simplifiedLeft.toString().equals(simplifiedRight.toString())) {
-				return new Times(new Number(2), simplifiedLeft);
-			}
-			else if (simplifiedLeft.isTimes() && simplifiedRight.isVariable()) {
-				Expression newFactor = new Number(simplifiedLeft.getFactor() + simplifiedRight.getFactor());
-				Expression newVariable = new Variable(simplifiedRight.getVariable());
-				return new Times(newFactor, new Power(newVariable, simplifiedLeft.getExponent()));
-			}
-			else if (simplifiedLeft.isVariable() && simplifiedRight.isTimes()) {
-				Expression newFactor = new Number(simplifiedLeft.getFactor() + simplifiedRight.getFactor());
-				Expression newVariable = new Variable(simplifiedLeft.getVariable());
-				return new Times(newFactor, new Power(newVariable, simplifiedLeft.getExponent()));
-			}
-			else {
-				return new Plus(simplifiedLeft, simplifiedRight);
-			}
-		}
-		else if (simplifiedLeft.getFactor().equals(0.0)) {
-			return simplifiedRight;
-		}
-		else if (simplifiedRight.getFactor().equals(0.0)) {
-			return simplifiedLeft;
 		}
 		else {
 			return new Plus(simplifiedLeft, simplifiedRight);
@@ -137,11 +167,29 @@ public class Plus implements Expression {
 		// not instance of Times
 		return false;
 	}
+
+	@Override
+	public boolean isPlus() {
+		// only instance of Plus
+		return true;
+	}
+
+	@Override
+	public boolean isMinus() {
+		// not instance of Minus
+		return false;
+	}
 	
 	@Override
-	public boolean isLeftAndRightExpression() {
-		// left and right Expression construction
-		return true;
+	public boolean hasSameVariable(Expression thatVariable) {
+		// not instance of Variable
+		return false;
+	}
+	
+	@Override
+	public boolean isParenthesis() {
+		// not instance of Parenthesis
+		return false;
 	}
 
 	@Override
@@ -157,6 +205,58 @@ public class Plus implements Expression {
 	@Override
 	public String getVariable() {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Expression getLeft() {
+		// returns copies of left Expression
+		if (left.isNumber()) {
+			return new Number(left.getFactor());
+		}
+		else if (left.isVariable()) {
+			return new Power(new Variable(left.getVariable()), left.getExponent());
+		}
+		else if (left.isPlus()) {
+			return new Plus(left.getLeft(), left.getRight());
+		}
+		else if (left.isMinus()) {
+			return new Minus(left.getLeft(), left.getRight());
+		}
+		else if (left.isTimes()) {
+			return new Times(left.getLeft(), left.getRight());
+		}
+		else if (left.isParenthesis()) {
+			return new Parenthesis(left);
+		}
+		else {
+			throw new UnsupportedOperationException("Expression type not implemented");
+		}
+	}
+
+	@Override
+	public Expression getRight() {
+		// returns copies of right Expression
+		if (right.isNumber()) {
+			return new Number(right.getFactor());
+		}
+		else if (right.isVariable()) {
+			return new Power(new Variable(right.getVariable()), right.getExponent());
+		}
+		else if (right.isPlus()) {
+			return new Plus(right.getLeft(), right.getRight());
+		}
+		else if (right.isMinus()) {
+			return new Minus(right.getLeft(), right.getRight());
+		}
+		else if (right.isTimes()) {
+			return new Times(right.getLeft(), right.getRight());
+		}
+		else if (right.isParenthesis()) {
+			return new Parenthesis(right);
+		}
+		else {
+			throw new UnsupportedOperationException("Expression type not implemented");
+		}
 	}
 
 }

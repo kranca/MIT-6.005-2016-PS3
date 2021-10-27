@@ -42,9 +42,9 @@ public class CommandsTest {
     	String expressionString = "x*x*x*x";
     	String differentiatedExpression = Commands.differentiate(expressionString, "x");
     	
-    	String expected = "x * ( x * ( x * 1.0 + x * 1.0 ) + ( x * x ) * 1.0 ) + ( x * x * x ) * 1.0";
+    	String expected = "x * ( x * ( x * 1.0 + x * 1.0 ) + x * x * 1.0 ) + x * x * x * 1.0";
     	
-    	assertEquals("Expected String \"x * ( x * ( x * 1.0 + x * 1.0 ) + ( x * x ) * 1.0 ) + ( x * x * x ) * 1.0\"", expected, differentiatedExpression);
+    	assertEquals("Expected String \"x * ( x * ( x * 1.0 + x * 1.0 ) + x * x * 1.0 ) + x * x * x * 1.0\"", expected, differentiatedExpression);
     }
     
     // covers simplify()
@@ -55,9 +55,9 @@ public class CommandsTest {
     	String differentiatedExpression = Commands.differentiate(expressionString, "W");
     	String simplifiedExpression = Commands.simplify(differentiatedExpression, environment);
     	
-    	String expected = "( W + 5.0 ) + ( W - 5.0 )";
+    	String expected = "W - 5.0 + W + 0.0 - 5.0";
     	
-    	assertEquals("Expected String \"( W + 5.0 ) + ( W - 5.0 )\"", expected, simplifiedExpression);
+    	assertEquals("Expected String \"W - 5.0 + W + 0.0 - 5.0\"", expected, simplifiedExpression);
     }
     
     @Test
@@ -71,4 +71,19 @@ public class CommandsTest {
     	
     	assertEquals("Expected String \"0.0\"", expected, simplifiedExpression);
     }
+    
+    @Test
+    public void testSimplifyEquation() {
+    	Map<String,Double> environment = new HashMap<>();
+    	
+    	String expressionString = "5*x*x*x*x-3*x*x*x";
+    	String differentiatedExpression = Commands.differentiate(expressionString, "x");
+    	String simplifiedExpression = Commands.simplify(differentiatedExpression, environment);
+    	
+    	String expected = "20.0 * x * x * x + 0.0 - 9.0 * x * x";
+    	
+    	assertEquals("Expected String \"20.0 * x * x * x + 0.0 - 9.0 * x * x\"", expected, simplifiedExpression);
+    }
+    
+
 }

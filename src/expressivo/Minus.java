@@ -65,6 +65,26 @@ public class Minus implements Expression {
 	}
 
 	@Override
+	public Expression expand() {
+		// expand recursively
+		return new Minus(left.expand(), right.expand());
+	}
+	
+	@Override
+	public Expression reduce() {
+		// reduce recursively left and right
+		Expression rLeft = left.reduce();
+		Expression rRight = right.reduce();
+		
+		if (rLeft.equals(rRight)) {
+			return new Number(0);
+		}
+		else {
+			return new Minus(rLeft, rRight);
+		}
+	}
+
+	@Override
 	public Expression simplify(Map<String, Double> environment) {
 		// update expression by simplifying recursively
 		Expression simplifiedLeft = left.simplify(environment);
@@ -74,7 +94,12 @@ public class Minus implements Expression {
 			Double valueLeft = Double.valueOf(simplifiedLeft.toString());
 			Double valueRight = Double.valueOf(simplifiedRight.toString());
 			Double result = valueLeft - valueRight;
-			return new Number(result);
+			if (result < 0.0) {
+				return new Minus(new Number(0), new Number(result*(-1.0)));
+			}
+			else {
+				return new Number(result);
+			}
 		}
 		else if(simplifiedLeft.equals(simplifiedRight)) {
 			return new Number(0);
@@ -101,11 +126,29 @@ public class Minus implements Expression {
 		// not instance of Times
 		return false;
 	}
+
+	@Override
+	public boolean isPlus() {
+		// not instance of Plus
+		return false;
+	}
+
+	@Override
+	public boolean isMinus() {
+		// only instance of Minus
+		return true;
+	}
 	
 	@Override
-	public boolean isLeftAndRightExpression() {
-		// left and right Expression construction
-		return true;
+	public boolean hasSameVariable(Expression thatVariable) {
+		// not instance of Variable
+		return false;
+	}
+	
+	@Override
+	public boolean isParenthesis() {
+		// not instance of Parenthesis
+		return false;
 	}
 
 	@Override
@@ -121,6 +164,58 @@ public class Minus implements Expression {
 	@Override
 	public String getVariable() {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Expression getLeft() {
+		// returns copies of left Expression
+		if (left.isNumber()) {
+			return new Number(left.getFactor());
+		}
+		else if (left.isVariable()) {
+			return new Power(new Variable(left.getVariable()), left.getExponent());
+		}
+		else if (left.isPlus()) {
+			return new Plus(left.getLeft(), left.getRight());
+		}
+		else if (left.isMinus()) {
+			return new Minus(left.getLeft(), left.getRight());
+		}
+		else if (left.isTimes()) {
+			return new Times(left.getLeft(), left.getRight());
+		}
+		else if (left.isParenthesis()) {
+			return new Parenthesis(left);
+		}
+		else {
+			throw new UnsupportedOperationException("Expression type not implemented");
+		}
+	}
+
+	@Override
+	public Expression getRight() {
+		// returns copies of right Expression
+		if (right.isNumber()) {
+			return new Number(right.getFactor());
+		}
+		else if (right.isVariable()) {
+			return new Power(new Variable(right.getVariable()), right.getExponent());
+		}
+		else if (right.isPlus()) {
+			return new Plus(right.getLeft(), right.getRight());
+		}
+		else if (right.isMinus()) {
+			return new Minus(right.getLeft(), right.getRight());
+		}
+		else if (right.isTimes()) {
+			return new Times(right.getLeft(), right.getRight());
+		}
+		else if (right.isParenthesis()) {
+			return new Parenthesis(right);
+		}
+		else {
+			throw new UnsupportedOperationException("Expression type not implemented");
+		}
 	}
 
 }

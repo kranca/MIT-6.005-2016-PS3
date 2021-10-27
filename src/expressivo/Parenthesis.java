@@ -65,6 +65,22 @@ public class Parenthesis implements Expression {
 	}
 
 	@Override
+	public Expression expand() {
+		// eliminate parenthesis and expand recursively
+		Expression newCenter = center.expand();
+
+		return newCenter;
+	}
+	
+	@Override
+	public Expression reduce() {
+		// eliminate parenthesis and reduce recursively
+		Expression newCenter = center.reduce();
+
+		return newCenter;
+	}
+
+	@Override
 	public Expression simplify(Map<String, Double> environment) {
 		// simplify recursively and eliminate parenthesis if center is only Number or Variable
 		Expression newCenter = center.simplify(environment);
@@ -93,10 +109,28 @@ public class Parenthesis implements Expression {
 		// not instance of Times
 		return false;
 	}
+
+	@Override
+	public boolean isPlus() {
+		// not instance of Plus
+		return false;
+	}
+
+	@Override
+	public boolean isMinus() {
+		// not instance of Minus
+		return false;
+	}
 	
 	@Override
-	public boolean isLeftAndRightExpression() {
-		// no left and right Expression construction
+	public boolean hasSameVariable(Expression thatVariable) {
+		// not instance of Variable
+		return false;
+	}
+	
+	@Override
+	public boolean isParenthesis() {
+		// not instance of Parenthesis
 		return false;
 	}
 
@@ -112,6 +146,16 @@ public class Parenthesis implements Expression {
 
 	@Override
 	public String getVariable() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Expression getLeft() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Expression getRight() {
 		throw new UnsupportedOperationException();
 	}
 
